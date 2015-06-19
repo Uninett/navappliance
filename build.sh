@@ -1,5 +1,5 @@
 #!/bin/bash -e
-# Builds a virtual appliance in OVF format out of NAV, based on Debian Wheezy
+# Builds a virtual appliance in OVF format out of NAV, based on Debian GNU/Linux
 # and the latest available NAV Debian package.
 
 NAME=navappliance

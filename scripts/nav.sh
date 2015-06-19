@@ -4,12 +4,21 @@
 date > /etc/nav_box_build_time
 
 # Customize the message of the day
-echo 'Welcome to the Network Administration Visualized virtual appliance.' > /etc/motd
+cat > /etd/motd <<EOF
+
+Welcome to the Network Administration Visualized virtual appliance.
+
+The `packer` user, used to provision this VM, may still be on this system, but
+the account has been locked and can be safely deleted.
+
+For more information about NAV, please see https://nav.uninett.no/
+
+EOF
 
 apt-get install -y apt-transport-https makepasswd
 apt-key adv --keyserver keys.gnupg.net --recv-key 0xC9F583C2CE8E05E8 # UNINETT NAV APT repository
 
-echo "deb https://nav.uninett.no/debian/ wheezy nav" > /etc/apt/sources.list.d/nav.list
+echo "deb https://nav.uninett.no/debian/ jessie test" > /etc/apt/sources.list.d/nav.list
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -24,11 +33,11 @@ nav	nav/db_auto_update	boolean	true
 EOF
 
 apt-get -y update
-apt-get --force-yes -y install nav graphite-carbon graphite-web
+apt-get --force-yes -y install nav python-django=1.4.5-1+jessie1 graphite-carbon graphite-web
 # Explicitly install rrdtool to enable data migrations from older NAV versions
 apt-get --force-yes -y --no-install-recommends install rrdtool python-rrdtool
 
-a2dissite default
+a2dissite 000-default
 a2dissite default-ssl
 a2ensite nav-default
 
@@ -47,7 +56,7 @@ sudo -u _graphite graphite-manage syncdb --noinput
 # Configure graphite-web to run openly on port 8000
 # WARNING: May be a security risk if port 8000 is exposed outside the virtual
 # machine without authorization measures.
-cat > /etc/apache2/sites-available/graphite-web <<EOF
+cat > /etc/apache2/sites-available/graphite-web.conf <<EOF
 Listen 8000
 <VirtualHost *:8000>
 

@@ -20,3 +20,6 @@ GRUB_CMDLINE_LINUX="debian-installer=en_US"
 EOF
 
 update-grub
+
+# Allow password-based root logins on this virtual appliance
+sed -i 's/^PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
