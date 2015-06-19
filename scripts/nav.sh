@@ -18,7 +18,7 @@ EOF
 apt-get install -y apt-transport-https makepasswd
 apt-key adv --keyserver keys.gnupg.net --recv-key 0xC9F583C2CE8E05E8 # UNINETT NAV APT repository
 
-echo "deb https://nav.uninett.no/debian/ jessie test" > /etc/apt/sources.list.d/nav.list
+echo "deb https://nav.uninett.no/debian/ jessie nav" > /etc/apt/sources.list.d/nav.list
 
 export DEBIAN_FRONTEND=noninteractive
 
