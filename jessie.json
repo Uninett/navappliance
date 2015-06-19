@@ -10,8 +10,8 @@
     "builders": [
         {
             "type": "virtualbox-iso",
-            "vm_name": "nav-virtual-appliance",
-            "output_directory": "nav-virtual-appliance",
+            "vm_name": "navappliance",
+            "output_directory": "navappliance",
 
             "guest_os_type": "Debian_64",
             "iso_url": "http://cdimage.debian.org/cdimage/release/8.1.0/amd64/iso-cd/debian-8.1.0-amd64-netinst.iso",
