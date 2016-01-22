@@ -3,3 +3,4 @@ navappliance/
 *.gz
 *.asc
 packer_cache/
+output/

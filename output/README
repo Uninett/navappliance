@@ -1,0 +1,10 @@
+NAV Virtual Appliance
+=====================
+
+This directory contains a Network Administration Visualized virtual appliance,
+for use with any virtualization platform that supports the Open Virtualization
+Format.
+
+Please see https://nav.uninett.no/install-instructions/#ovf for instructions on
+installation and use.
+

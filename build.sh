@@ -3,7 +3,7 @@
 # and the latest available NAV Debian package.
 
 NAME=navappliance
-TARBALL="${NAME}.tar.gz"
+TARBALL="output/${NAME}.tar.gz"
 PATH=$PATH:/opt/packer
 PACKER="$(which packer)"
 if [ -z "$PACKER" ]; then
