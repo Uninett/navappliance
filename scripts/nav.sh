@@ -56,7 +56,7 @@ sudo -u _graphite graphite-manage syncdb --noinput
 # Configure graphite-web to run openly on port 8000
 # WARNING: May be a security risk if port 8000 is exposed outside the virtual
 # machine without authorization measures.
-cat > /etc/apache2/sites-available/graphite-web.conf <<EOF
+cat > /etc/apache2/sites-available/graphite-web.conf <<-EOF
 Listen 8000
 <VirtualHost *:8000>
 
