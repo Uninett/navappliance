@@ -15,10 +15,11 @@ For more information about NAV, please see https://nav.uninett.no/
 
 EOF
 
-apt-get install -y apt-transport-https makepasswd
+apt-get install -y apt-transport-https makepasswd lsb-release
 apt-key adv --keyserver keys.gnupg.net --recv-key 0xC9F583C2CE8E05E8 # UNINETT NAV APT repository
 
-echo "deb https://nav.uninett.no/debian/ jessie nav" > /etc/apt/sources.list.d/nav.list
+CODENAME=$(lsb_release -s -c)
+echo "deb https://nav.uninett.no/debian/ ${CODENAME} nav" > /etc/apt/sources.list.d/nav.list
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -33,7 +34,10 @@ nav	nav/db_auto_update	boolean	true
 EOF
 
 apt-get -y update
-apt-get --force-yes -y install nav python-django=1.4.5-1+jessie1 graphite-carbon graphite-web
+if [ "$CODENAME" = "wheezy" ]; then
+    apt-get --force-yes -y install python-django/wheezy-backports
+fi
+apt-get --force-yes -y install nav graphite-carbon graphite-web
 # Explicitly install rrdtool to enable data migrations from older NAV versions
 apt-get --force-yes -y --no-install-recommends install rrdtool python-rrdtool
 
