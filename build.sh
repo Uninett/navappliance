@@ -16,5 +16,5 @@ OS=jessie
 [ -n "$1" ] && OS="$1"
 
 "$PACKER" build "${OS}.json"
-tar cvf "${TARBALL}" "${NAME}/"
+tar cvzf "${TARBALL}" "${NAME}/"
 gpg --armor --detach-sign "${TARBALL}"
