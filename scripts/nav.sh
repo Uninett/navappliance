@@ -57,6 +57,9 @@ sed -e 's/^CARBON_CACHE_ENABLED\b.*$/CARBON_CACHE_ENABLED=true/g' -i /etc/defaul
 # Initialize graphite-web database
 sudo -u _graphite graphite-manage syncdb --noinput
 
+# Configure graphite-web to use the same timezone as NAV's default
+echo "TIME_ZONE='Europe/Oslo'" >> /etc/graphite/local_settings.py
+
 # Configure graphite-web to run openly on port 8000
 # WARNING: May be a security risk if port 8000 is exposed outside the virtual
 # machine without authorization measures.
