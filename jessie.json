@@ -2,7 +2,7 @@
     "variables": {
         "user": "packer",
         "password": "packer",
-        "disk_size": 10000,
+        "disk_size": "10000",
         "domain": "example.org",
 	"description": "The biggest foobar in the universe!"
     },
