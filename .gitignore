@@ -1,4 +1,3 @@
-syntax:glob
 navappliance/
 *.gz
 *.asc
