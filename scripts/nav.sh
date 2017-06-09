@@ -97,7 +97,7 @@ apache2ctl restart
 
 # Enable NAV at start up
 echo "Enable NAV to run at start up"
-sed -e s/RUN_NAV=[01]*$/RUN_NAV=1/g -i /etc/default/nav
+systemctl unmask nav
 
-/etc/init.d/nav restart
-/etc/init.d/nav stop
+systemctl restart nav
+systemctl stop nav
