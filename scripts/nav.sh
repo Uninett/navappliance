@@ -47,8 +47,6 @@ if [ "$CODENAME" = "stretch" ]; then
     apt-get --force-yes -y install ca-certificates dirmngr
 fi
 apt-get --force-yes -y install nav graphite-carbon graphite-web
-# Explicitly install rrdtool to enable data migrations from older NAV versions
-apt-get --force-yes -y --no-install-recommends install rrdtool python-rrdtool
 
 a2dissite 000-default
 a2dissite default-ssl
