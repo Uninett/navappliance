@@ -13,6 +13,9 @@ To build and GPG-sign an appliance, just run the ``build.sh`` script.
 Booting the appliance for the first time
 ----------------------------------------
 
+The appliance should work out-of-the-box on first boot, but you may want to
+adapt it to your needs for a smoother experience:
+
 * Log in as root and change the root password from ``navrocks`` to something
   else (using the ``passwd`` command)
 
@@ -20,7 +23,7 @@ Booting the appliance for the first time
   user's email to. Then run the ``newaliases`` command.
 
 * Fix the network configuration (``/etc/network/interfaces``), if necessary,
-  and restart the networking service using ``/etc/init.d/network restart``
+  and restart the networking service using ``service network restart``
 
 * Add networks that should be allowed to talk to the appliance in
   ``/etc/hosts.allow`` (both clients to the NAV web interface and network
@@ -30,12 +33,15 @@ Booting the appliance for the first time
   ``/etc/resolv.conf``, ``/etc/mailname`` and
   ``/etc/exim4/update-exim4.conf.conf``.
 
+* The timezone of NAV and Graphite is set to ``Europe/Oslo``. You may wish to
+  change this in ``/etc/nav/nav.conf`` and
+  ``/etc/graphite/local_settings.py``
 
 Operating System
 ----------------
 
-The virtual appliance is based on Debian GNU/Linux, and the Debian packages
-released by the NAV team at their `APT repository`_.
+The virtual appliance is based on Debian GNU/Linux 9 (Stretch), and the Debian
+packages released by the NAV team at their `APT repository`_.
 
 .. _`Network Administration Visualized`: https://nav.uninett.no/
 .. _Packer: https://packer.io/
