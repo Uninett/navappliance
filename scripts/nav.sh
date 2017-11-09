@@ -8,7 +8,7 @@ cat > /etc/motd <<EOF
 
 Welcome to the Network Administration Visualized virtual appliance.
 
-The `packer` user, used to provision this VM, may still be on this system, but
+The 'packer' user, used to provision this VM, may still be on this system, but
 the account has been locked and can be safely deleted.
 
 For more information about NAV, please see https://nav.uninett.no/
