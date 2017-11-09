@@ -4,7 +4,7 @@
 date > /etc/nav_box_build_time
 
 # Customize the message of the day
-cat > /etd/motd <<EOF
+cat > /etc/motd <<EOF
 
 Welcome to the Network Administration Visualized virtual appliance.
 
@@ -20,6 +20,12 @@ apt-key adv --keyserver keys.gnupg.net --recv-key 0xC9F583C2CE8E05E8 # UNINETT N
 
 CODENAME=$(lsb_release -s -c)
 echo "deb https://nav.uninett.no/debian/ ${CODENAME} nav" > /etc/apt/sources.list.d/nav.list
+cat > /etc/apt/preferences.d/nav.pref <<EOF
+# Give packages from nav.uninett.no higher priority, at your own risk
+Package: *
+Pin: origin nav.uninett.no
+Pin-Priority: 600
+EOF
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -36,6 +42,9 @@ EOF
 apt-get -y update
 if [ "$CODENAME" = "wheezy" ]; then
     apt-get --force-yes -y install python-django/wheezy-backports
+fi
+if [ "$CODENAME" = "stretch" ]; then
+    apt-get --force-yes -y install ca-certificates dirmngr
 fi
 apt-get --force-yes -y install nav graphite-carbon graphite-web
 # Explicitly install rrdtool to enable data migrations from older NAV versions

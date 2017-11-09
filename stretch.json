@@ -14,15 +14,15 @@
             "output_directory": "navappliance",
 
             "guest_os_type": "Debian_64",
-            "iso_url": "http://cdimage.debian.org/cdimage/release/8.7.1/amd64/iso-cd/debian-8.7.1-amd64-netinst.iso",
-            "iso_checksum": "749a15b7690769dd99e85d6104182a03d370b04b36106ec7cfaf6a551aa89fb4",
+            "iso_url": "https://cdimage.debian.org/cdimage/release/9.2.1/amd64/iso-cd/debian-9.2.1-amd64-netinst.iso",
+            "iso_checksum": "ec78bc48b48d676775b60eda41528ec33c151c2ce7414a12b13d9b73d34de544",
             "iso_checksum_type": "sha256",
 
             "http_directory": "http",
             "boot_command": [
                 "<esc><wait>",
                 "install <wait>",
-                "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/jessie-preseed.cfg <wait>",
+                "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/stretch-preseed.cfg <wait>",
                 "debian-installer=en_US <wait>",
                 "auto <wait>",
                 "locale=en_US <wait>",
