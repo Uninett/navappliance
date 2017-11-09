@@ -40,9 +40,6 @@ nav	nav/db_auto_update	boolean	true
 EOF
 
 apt-get -y update
-if [ "$CODENAME" = "wheezy" ]; then
-    apt-get --force-yes -y install python-django/wheezy-backports
-fi
 if [ "$CODENAME" = "stretch" ]; then
     apt-get --force-yes -y install ca-certificates dirmngr
 fi
