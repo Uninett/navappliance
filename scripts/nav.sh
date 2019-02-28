@@ -20,12 +20,9 @@ apt-key adv --keyserver keys.gnupg.net --recv-key 0xC9F583C2CE8E05E8 # UNINETT N
 
 CODENAME=$(lsb_release -s -c)
 echo "deb https://nav.uninett.no/debian/ ${CODENAME} nav" > /etc/apt/sources.list.d/nav.list
-cat > /etc/apt/preferences.d/nav.pref <<EOF
-# Give packages from nav.uninett.no higher priority, at your own risk
-Package: *
-Pin: origin nav.uninett.no
-Pin-Priority: 600
-EOF
+if [ "$CODENAME" = "stretch" ]; then
+    echo "deb http://deb.debian.org/debian stretch-backports main" > /etc/apt/sources.list.d/backports.list
+fi
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -42,8 +39,10 @@ EOF
 apt-get -y update
 if [ "$CODENAME" = "stretch" ]; then
     apt-get --force-yes -y install ca-certificates dirmngr
+    apt-get --force-yes -y install python-psycopg2 graphite-carbon \
+      python-whisper/stretch-backports graphite-web/stretch-backports
 fi
-apt-get --force-yes -y install nav graphite-carbon graphite-web
+apt-get --force-yes -y install nav
 
 a2dissite 000-default
 a2dissite default-ssl
@@ -59,7 +58,8 @@ sed -e 's/^ENABLE_UDP_LISTENER\b.*$/ENABLE_UDP_LISTENER = True/g' -i "$CARBONCON
 sed -e 's/^CARBON_CACHE_ENABLED\b.*$/CARBON_CACHE_ENABLED=true/g' -i /etc/default/graphite-carbon
 
 # Initialize graphite-web database
-sudo -u _graphite graphite-manage syncdb --noinput
+sudo -u _graphite graphite-manage migrate auth --noinput
+sudo -u _graphite graphite-manage migrate --run-syncdb --noinput
 
 # Configure graphite-web to use the same timezone as NAV's default
 echo "TIME_ZONE='Europe/Oslo'" >> /etc/graphite/local_settings.py
