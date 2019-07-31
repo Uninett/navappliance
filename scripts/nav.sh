@@ -41,6 +41,9 @@ if [ "$CODENAME" = "stretch" ]; then
     apt-get --force-yes -y install ca-certificates dirmngr
     apt-get --force-yes -y install python-psycopg2 graphite-carbon \
       python-whisper/stretch-backports graphite-web/stretch-backports
+elif [ "$CODENAME" = "buster" ]; then
+    apt-get -y install python3-psycopg2 python3-memcache graphite-carbon graphite-web
+    apt-get -y install uwsgi uwsgi-plugin-python uwsgi-plugin-python3 libapache2-mod-proxy-uwsgi libapache2-mod-uwsgi
 fi
 apt-get --force-yes -y install nav
 
@@ -64,40 +67,63 @@ sudo -u _graphite graphite-manage migrate --run-syncdb --noinput
 # Configure graphite-web to use the same timezone as NAV's default
 echo "TIME_ZONE='Europe/Oslo'" >> /etc/graphite/local_settings.py
 
+cat > /etc/uwsgi/apps-enabled/graphite-web.ini <<EOF
+[uwsgi]
+uid = _graphite
+gid = _graphite
+buffer-size = 32768
+chdir = /usr/share/graphite-web
+env = DJANGO_SETTINGS_MODULE=graphite.settings
+max-requests = 100
+module = graphite.wsgi:application
+plugins = python3
+processes = 5
+socket = 127.0.0.1:7999
+touch-reload = /usr/lib/python3/dist-packages/graphite/wsgi.py
+EOF
+
 # Configure graphite-web to run openly on port 8000
 # WARNING: May be a security risk if port 8000 is exposed outside the virtual
 # machine without authorization measures.
-cat > /etc/apache2/sites-available/graphite-web.conf <<-EOF
+cat > /etc/apache2/sites-available/graphite-web.conf <<EOF
 Listen 8000
 <VirtualHost *:8000>
 
-	WSGIDaemonProcess _graphite processes=1 threads=1 display-name='%{GROUP}' inactivity-timeout=120 user=_graphite group=_graphite
-	WSGIProcessGroup _graphite
-	WSGIImportScript /usr/share/graphite-web/graphite.wsgi process-group=_graphite application-group=%{GLOBAL}
-	WSGIScriptAlias / /usr/share/graphite-web/graphite.wsgi
-
-	Alias /content/ /usr/share/graphite-web/static/
-	<Location "/content/">
+	Alias /static/ /usr/share/graphite-web/static/
+	<Location "/static/">
 		SetHandler None
+		Require all granted
+	</Location>
+
+	<Location "/">
+		Options FollowSymlinks Indexes
+		Require all granted
 	</Location>
 
 	ErrorLog \${APACHE_LOG_DIR}/graphite-web_error.log
-
-	# Possible values include: debug, info, notice, warn, error, crit,
-	# alert, emerg.
 	LogLevel warn
-
+        ServerSignature off
 	CustomLog \${APACHE_LOG_DIR}/graphite-web_access.log combined
+
+	ProxyRequests Off
+	ProxyPreserveHost Off
+	ProxyPass /static/ !
+	ProxyPassReverse /static/ !
+	ProxyPass / uwsgi://127.0.0.1:7999/
+	ProxyPassReverse / uwsgi://127.0.0.1:7999/
+
+	ProxyTimeout 300
 
 </VirtualHost>
 
 EOF
+a2enmod uwsgi proxy proxy_uwsgi
 a2ensite graphite-web
 
 # Configure carbon according to NAV's wishes
 cp /etc/nav/graphite/*.conf /etc/carbon/
 
-apache2ctl restart
+systemctl restart apache2 uwsgi
 
 # Enable NAV at start up
 echo "Enable NAV to run at start up"
