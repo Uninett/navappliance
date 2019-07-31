@@ -12,7 +12,7 @@ if [ -z "$PACKER" ]; then
     exit 1
 fi
 
-OS=stretch
+OS=buster
 [ -n "$1" ] && OS="$1"
 
 "$PACKER" build "${OS}.json"

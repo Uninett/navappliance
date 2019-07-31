@@ -40,7 +40,7 @@ adapt it to your needs for a smoother experience:
 Operating System
 ----------------
 
-The virtual appliance is based on Debian GNU/Linux 9 (Stretch), and the Debian
+The virtual appliance is based on Debian GNU/Linux 10 (Buster), and the Debian
 packages released by the NAV team at their `APT repository`_.
 
 .. _`Network Administration Visualized`: https://nav.uninett.no/
