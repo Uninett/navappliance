@@ -11,6 +11,7 @@
         {
             "type": "virtualbox-iso",
             "vm_name": "navappliance",
+            "headless": true,
             "output_directory": "navappliance",
 
             "guest_os_type": "Debian_64",
