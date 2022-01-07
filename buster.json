@@ -16,8 +16,7 @@
 
             "guest_os_type": "Debian_64",
             "iso_url": "https://cdimage.debian.org/cdimage/release/10.2.0/amd64/iso-cd/debian-10.2.0-amd64-netinst.iso",
-            "iso_checksum": "e43fef979352df15056ac512ad96a07b515cb8789bf0bfd86f99ed0404f885f5",
-            "iso_checksum_type": "sha256",
+            "iso_checksum": "sha256:e43fef979352df15056ac512ad96a07b515cb8789bf0bfd86f99ed0404f885f5",
 
             "http_directory": "http",
             "boot_command": [
@@ -46,8 +45,6 @@
             "boot_wait": "5s",
 
             "disk_size": "{{ user `disk_size`}}",
-            "guest_os_type": "Debian_64",
-            "headless": false,
 
             "ssh_username": "{{user `user`}}",
             "ssh_password": "{{user `password`}}",
