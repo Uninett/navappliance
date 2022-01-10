@@ -21,3 +21,10 @@ jobs:
           packer build buster.json
         env:
           PACKER_LOG: 0
+
+      - name: Upload appliance artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: navappliance
+          path: |
+            navappliance/**/*
