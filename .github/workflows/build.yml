@@ -28,11 +28,15 @@ jobs:
         env:
           PACKER_LOG: 0
 
+      - name: Archive artifact
+        run: |
+          tar cvzf navappliance.tar.gz navappliance/
+
       - name: Upload appliance artifacts
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "navappliance/**/*"
+          artifacts: "navappliance.tar.gz"
           name: latest
-          body: "${{ steps.date.outputs.date }}"
+          body: "Automated build on ${{ steps.date.outputs.date }}, using latest available Debian packages"
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
