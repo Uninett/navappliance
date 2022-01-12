@@ -5,10 +5,16 @@ jobs:
   packer:
     name: "Build appliance using Packer"
     runs-on: macos-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
 
       - name: Validate Template
         run: |
@@ -23,8 +29,10 @@ jobs:
           PACKER_LOG: 0
 
       - name: Upload appliance artifacts
-        uses: actions/upload-artifact@v2
+        uses: ncipollo/release-action@v1
         with:
-          name: navappliance
-          path: |
-            navappliance/**/*
+          artifacts: "navappliance/**/*"
+          name: latest
+          body: "${{ steps.date.outputs.date }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
