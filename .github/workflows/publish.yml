@@ -11,7 +11,8 @@ jobs:
     name: "Publish appliance as release"
     runs-on: ubuntu-latest
     if: >
-      github.event.workflow_run.conclusion != 'skipped' && github.event.workflow_run.head_repository.full_name == github.repository
+      github.event.workflow_run.conclusion == 'success'
+      && github.event.workflow_run.head_repository.full_name == github.repository
     permissions:
       contents: write
 
