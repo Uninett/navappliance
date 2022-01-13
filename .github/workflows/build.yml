@@ -12,10 +12,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Get current date
-        id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-
       - name: Validate Template
         run: |
           packer validate buster.json
@@ -28,15 +24,9 @@ jobs:
         env:
           PACKER_LOG: 0
 
-      - name: Archive artifact
-        run: |
-          tar cvzf navappliance.tar.gz navappliance/
-
-      - name: Upload appliance artifacts
-        uses: ncipollo/release-action@v1
+      - name: Upload appliance artifact
+        uses: actions/upload-artifact@v2
         with:
-          artifacts: "navappliance.tar.gz"
-          name: latest
-          body: "Automated build on ${{ steps.date.outputs.date }}, using latest available Debian packages"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          allowUpdates: true
+          name: navappliance
+          path: |
+            navappliance/**/*
