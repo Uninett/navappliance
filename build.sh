@@ -17,4 +17,3 @@ OS=buster
 
 "$PACKER" build "${OS}.json"
 tar cvzf "${TARBALL}" "${NAME}/"
-gpg --armor --detach-sign "${TARBALL}"
