@@ -41,3 +41,4 @@ jobs:
           body: "Automated build on ${{ steps.date.outputs.date }}, using latest available Debian packages"
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
+          tag: master
