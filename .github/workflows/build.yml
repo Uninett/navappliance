@@ -22,7 +22,12 @@ jobs:
         run: |
           packer build buster.json
         env:
-          PACKER_LOG: 0
+          PACKER_LOG: 1
+          PACKER_LOG_PATH: /tmp/packer.log
+
+      - name: Grep for nav package
+        run: |
+          grep 5.4.0-1 /tmp/packer.log
 
       - name: Upload appliance artifact
         uses: actions/upload-artifact@v2
