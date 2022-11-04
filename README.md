@@ -9,8 +9,9 @@ Administration Visualized](https://nav.uninett.no/) virtual appliance, using
 Appliances are built automatically by GitHub workflows in this
 repository. Check the
 [Releases](https://github.com/Uninett/navappliance/releases) page of the
-repository for the latest build.  To build an appliance manually, run the
-`build.sh` script.
+repository for the latest build (the release date may currently be fixed,
+though the contents of that release may be updated along the way).  To build an
+appliance manually, run the `build.sh` script.
 
 ## Booting the appliance for the first time
 
