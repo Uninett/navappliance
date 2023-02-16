@@ -19,7 +19,7 @@ apt-get install -y apt-transport-https makepasswd lsb-release software-propertie
 curl -fsSL https://nav.uninett.no/debian/gpg | apt-key add -  # UNINETT NAV APT repository
 
 CODENAME=$(lsb_release -s -c)
-add-apt-repository "deb https://nav.uninett.no/debian/ ${CODENAME} nav test"
+add-apt-repository "deb https://nav.uninett.no/debian/ ${CODENAME} nav"
 if [ "$CODENAME" = "stretch" ]; then
     add-apt-repository "deb http://deb.debian.org/debian stretch-backports main"
 fi
