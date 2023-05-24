@@ -41,7 +41,7 @@ if [ "$CODENAME" = "stretch" ]; then
     apt-get --force-yes -y install ca-certificates dirmngr
     apt-get --force-yes -y install python-psycopg2 graphite-carbon \
       python-whisper/stretch-backports graphite-web/stretch-backports
-elif [ "$CODENAME" = "buster" ]; then
+elif [ "$CODENAME" = "bullseye" ]; then
     apt-get -y install python3-psycopg2 python3-memcache graphite-carbon graphite-web
     apt-get -y install uwsgi uwsgi-plugin-python uwsgi-plugin-python3 libapache2-mod-proxy-uwsgi libapache2-mod-uwsgi
     apt-get -y remove python3-reportbug

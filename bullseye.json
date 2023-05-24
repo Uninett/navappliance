@@ -1,0 +1,75 @@
+{
+    "variables": {
+        "user": "packer",
+        "password": "packer",
+        "disk_size": "10000",
+        "domain": "example.org",
+	"description": "Network Administration Visualized Appliance\nhttps://nav.uninett.no/"
+    },
+
+    "builders": [
+        {
+            "type": "virtualbox-iso",
+            "vm_name": "navappliance",
+            "headless": true,
+            "output_directory": "navappliance",
+
+            "guest_os_type": "Debian_64",
+            "iso_url": "https://cdimage.debian.org/cdimage/archive/10.11.0/amd64/iso-cd/debian-10.11.0-amd64-netinst.iso",
+            "iso_checksum": "sha256:133430141272d8bf96cfb10b6bfd1c945f5a59ea0efc2bcb56d1033c7f2866ea",
+
+            "http_directory": "http",
+            "boot_command": [
+                "<esc><wait>",
+                "install <wait>",
+                "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/bullseye-preseed.cfg <wait>",
+                "debian-installer=en_US <wait>",
+                "auto <wait>",
+                "locale=en_US <wait>",
+                "kbd-chooser/method=us <wait>",
+                "hostname=navappliance <wait>",
+                "netcfg/get_domain={{ user `domain` }} <wait>",
+                "fb=false <wait>",
+                "debconf/frontend=noninteractive <wait>",
+
+		"passwd/user-fullname={{user `user`}} <wait>",
+                "passwd/user-password={{user `password`}} <wait>",
+                "passwd/user-password-again={{user `password`}} <wait>",
+                "passwd/username={{user `user`}} <wait>",
+
+                "console-setup/ask_detect=false <wait>",
+                "console-keymaps-at/keymap=us <wait>",
+                "keyboard-configuration/xkb-keymap=us <wait>",
+                "<enter><wait>"
+            ],
+            "boot_wait": "5s",
+
+            "disk_size": "{{ user `disk_size`}}",
+
+            "ssh_username": "{{user `user`}}",
+            "ssh_password": "{{user `password`}}",
+            "ssh_wait_timeout": "30m",
+            "shutdown_command": "echo '{{user `password`}}' | sudo -S /tmp/shutdown.sh",
+
+            "vboxmanage": [
+                ["modifyvm", "{{.Name}}", "--memory", "2048"],
+                ["modifyvm", "{{.Name}}", "--cpus", "1"],
+                ["modifyvm", "{{.Name}}", "--description", "{{user `description`}}"]
+            ]
+
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+	    "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+            "scripts": [
+                "scripts/base.sh",
+                "scripts/nav.sh",
+                "scripts/cleanup-virtualbox.sh",
+                "scripts/cleanup.sh",
+                "scripts/zerodisk.sh"
+            ]
+        }
+    ]
+}
