@@ -41,6 +41,6 @@ adapt it to your needs for a smoother experience:
 
 ## Operating System
 
-The virtual appliance is based on Debian GNU/Linux 10 (Buster), and the Debian
+The virtual appliance is based on Debian GNU/Linux 10 (Bullseye), and the Debian
 packages released by the NAV team at their [APT
 repository](https://nav.uninett.no/install-instructions/#debian).
