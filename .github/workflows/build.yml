@@ -14,13 +14,13 @@ jobs:
 
       - name: Validate Template
         run: |
-          packer validate buster.json
+          packer validate bullseye.json
         env:
           PACKER_LOG: 0
 
       - name: Build Artifact
         run: |
-          packer build buster.json
+          packer build bullseye.json
         env:
           PACKER_LOG: 0
 
