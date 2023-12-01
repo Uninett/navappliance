@@ -48,7 +48,7 @@
 
             "ssh_username": "{{user `user`}}",
             "ssh_password": "{{user `password`}}",
-            "ssh_wait_timeout": "30m",
+            "ssh_wait_timeout": "10m",
             "shutdown_command": "echo '{{user `password`}}' | sudo -S /tmp/shutdown.sh",
 
             "vboxmanage": [
