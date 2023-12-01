@@ -54,7 +54,9 @@
             "vboxmanage": [
                 ["modifyvm", "{{.Name}}", "--memory", "2048"],
                 ["modifyvm", "{{.Name}}", "--cpus", "1"],
-                ["modifyvm", "{{.Name}}", "--description", "{{user `description`}}"]
+                ["modifyvm", "{{.Name}}", "--description", "{{user `description`}}"],
+                ["modifyvm", "{{.Name}}", "--recordingfile", "capture.webm"],
+                ["modifyvm", "{{.Name}}", "--recording", "on"]
             ]
 
         }

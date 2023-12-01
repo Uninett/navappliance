@@ -23,6 +23,13 @@ jobs:
         run: |
           packer build bullseye.json
 
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: video
+          path: |
+            **/*.webm
+
       - name: Upload appliance artifact
         uses: actions/upload-artifact@v2
         with:
