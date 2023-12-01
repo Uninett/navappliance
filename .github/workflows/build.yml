@@ -9,7 +9,7 @@ jobs:
       contents: write
     env:
       PACKER_LOG: 1
-      PACKER_CACHE: ~/.cache/packer
+      PACKER_CACHE: .cache/packer
 
     steps:
       - name: Checkout repository
@@ -32,7 +32,7 @@ jobs:
         if: always()
         id: packer-cache
         with:
-          path: ~/.cache/packer
+          path: .cache/packer
           key: ${{ steps.get-checksum.outputs.checksum }}
 
       - name: Install virtualbox plugin
