@@ -12,6 +12,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Get ISO checksums
+        id: get-checksum
+        run: |
+          echo "checksum=$(cat bullseye.json | jq '.builders[].iso_checksum')" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: "Cache downloaded packer images"
+        uses: actions/cache/saveb@v3
+        if: always()
+        id: packer-cache
+        with:
+          path: ~/.cache/packer
+          key: ${{ steps.get-checksum.outputs.checksum }}
+
       - name: Install virtualbox plugin
         run: |
           packer plugins install github.com/hashicorp/virtualbox
