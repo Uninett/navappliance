@@ -40,7 +40,11 @@ jobs:
       - name: Build Artifact
         run: |
           packer build bullseye.json
-          ls -la
+
+      - name: List directory contents
+        if: always()
+        run: |
+          ls -la $PWD
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v2
