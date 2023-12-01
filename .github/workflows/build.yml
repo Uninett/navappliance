@@ -35,6 +35,7 @@ jobs:
           packer validate bullseye.json
         env:
           PACKER_LOG: 1
+          PACKER_CACHE: ~/.cache/packer
 
       - name: Build Artifact
         run: |
@@ -42,6 +43,7 @@ jobs:
           ls -la
         env:
           PACKER_LOG: 1
+          PACKER_CACHE: ~/.cache/packer
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v2
