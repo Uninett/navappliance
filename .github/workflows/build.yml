@@ -7,6 +7,9 @@ jobs:
     runs-on: macos-12
     permissions:
       contents: write
+    env:
+      PACKER_LOG: 1
+      PACKER_CACHE: ~/.cache/packer
 
     steps:
       - name: Checkout repository
@@ -33,17 +36,11 @@ jobs:
       - name: Validate Template
         run: |
           packer validate bullseye.json
-        env:
-          PACKER_LOG: 1
-          PACKER_CACHE: ~/.cache/packer
 
       - name: Build Artifact
         run: |
           packer build bullseye.json
           ls -la
-        env:
-          PACKER_LOG: 1
-          PACKER_CACHE: ~/.cache/packer
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v2
