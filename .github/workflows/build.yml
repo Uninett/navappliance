@@ -25,8 +25,16 @@ jobs:
       - name: Build Artifact
         run: |
           packer build bullseye.json
+          ls -la
         env:
           PACKER_LOG: 1
+
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: video
+          path: |
+            **/*.webm
 
       - name: Upload appliance artifact
         uses: actions/upload-artifact@v2
