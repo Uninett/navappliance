@@ -19,7 +19,7 @@ jobs:
         shell: bash
 
       - name: "Cache downloaded packer images"
-        uses: actions/cache/saveb@v3
+        uses: actions/cache/save@v3
         if: always()
         id: packer-cache
         with:
