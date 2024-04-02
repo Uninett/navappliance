@@ -42,11 +42,13 @@ jobs:
           packer validate bullseye.json
 
       - name: Build Artifact
+        timeout-minutes: 22
         run: |
           packer build bullseye.json
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: video
           path: |
