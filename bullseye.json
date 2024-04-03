@@ -22,6 +22,7 @@
             "boot_command": [
                 "<esc><wait>",
                 "<esc><wait>",
+                "<esc><wait>",
                 "install <wait>",
                 "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/bullseye-preseed.cfg <wait>",
                 "debian-installer=en_US <wait>",
