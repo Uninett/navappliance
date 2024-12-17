@@ -43,7 +43,7 @@ if [ "$CODENAME" = "bullseye" ]; then
     apt-get -y remove python3-reportbug
     apt-get -y autoremove
 fi
-apt-get --force-yes -y install nav
+apt-get -y install nav
 
 a2dissite 000-default
 a2dissite default-ssl
