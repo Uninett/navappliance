@@ -52,7 +52,7 @@ jobs:
         run: |
           packer validate bullseye.json
 
-      - name: Build Artifact
+      - name: Build Appliance Artifact
         timeout-minutes: 22
         run: |
           packer build bullseye.json
