@@ -33,7 +33,7 @@ jobs:
         id: details
         run: |
           if [ -f version.zip ]; then
-            unzip -v version.zip
+            unzip version.zip
           fi
           echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
           echo "nav_version=$(cat version.txt)" >> $GITHUB_OUTPUT
