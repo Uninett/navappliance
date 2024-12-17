@@ -36,7 +36,7 @@ jobs:
       - name: Publish artifacts as release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "navappliance.zip"
+          artifacts: "navappliance.zip,version.txt"
           name: ${{ steps.date.outputs.date }}
           body: "Automated build on ${{ steps.date.outputs.date }}, using latest available Debian packages"
           token: ${{ secrets.GITHUB_TOKEN }}
