@@ -8,7 +8,8 @@ jobs:
     permissions:
       contents: write
     env:
-      PACKER_LOG: 0
+      PACKER_LOG: 1
+      PACKER_LOG_PATH: packer_build.log
       PACKER_CACHE: .cache/packer
       PACKER_GITHUB_API_TOKEN: ${{ secrets.PACKER_GITHUB_API_TOKEN }}
 
@@ -56,6 +57,16 @@ jobs:
         timeout-minutes: 22
         run: |
           packer build bullseye.json
+
+      - name: Make note of NAV package version installed
+        run: |
+            grep "Unpacking nav" "$PACKER_LOG_PATH" | awk -F '[()]' '{print $2}' > navappliance/version.txt
+
+      - name: Upload version artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: version
+          path: navappliance/version.txt
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
