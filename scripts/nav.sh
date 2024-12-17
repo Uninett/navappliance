@@ -17,12 +17,13 @@ For more information about NAV, please see https://nav.uninett.no/
 EOF
 
 apt-get install -y apt-transport-https makepasswd lsb-release software-properties-common
-curl -fsSL https://nav.uninett.no/debian/gpg | apt-key add -  # UNINETT NAV APT repository
+mkdir -p --mode=0755 /etc/apt/keyrings
+curl -fsSL https://nav.uninett.no/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/nav.gpg
 
 CODENAME=$(lsb_release -s -c)
-add-apt-repository "deb https://nav.uninett.no/debian/ ${CODENAME} nav"
+echo "deb [signed-by=/etc/apt/keyrings/nav.gpg] https://nav.uninett.no/debian/ ${CODENAME} nav" > /etc/apt/sources.list.d/nav.list
 if [ "$CODENAME" = "bullseye" ]; then
-    add-apt-repository "deb http://deb.debian.org/debian bullseye-backports main"
+    echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list
 fi
 
 export DEBIAN_FRONTEND=noninteractive
