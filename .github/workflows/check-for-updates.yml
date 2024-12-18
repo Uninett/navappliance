@@ -1,0 +1,53 @@
+name: Trigger appliance build if newer NAV package is available
+
+on:
+  schedule:
+    - cron: '42 * * * *'  # Run 42 minutes past every hour
+  workflow_dispatch:
+
+jobs:
+  getversion:
+    name: "Get latest version of NAV package"
+    runs-on: ubuntu-latest
+    env:
+      APT_REPO: https://nav.uninett.no/debian
+      DISTRO: bullseye
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+    steps:
+      - name: Add NAV APT repository
+        run: |
+          sudo mkdir -p --mode=0755 /etc/apt/keyrings
+          curl -fsSL ${APT_REPO}/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/nav.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/nav.gpg] ${APT_REPO} ${DISTRO} nav" | sudo tee /etc/apt/sources.list.d/nav.list
+          sudo apt-get update
+
+      - name: Get latest NAV version
+        id: package
+        run: |
+          VERSION=$(apt-cache policy nav | awk -F ': ' '/Candidate/ {print $2}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get latest navappliance release
+        id: appliance
+        run: |
+          latest_release=$(gh api repos/${{ github.repository }}/releases/latest)
+          echo "$latest_release" > latest_release.json
+          cat latest_release.json
+
+          version=$(jq -r .tag_name latest_release.json | sed s/^v//)
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Verify update available
+        id: verify
+        run: |
+          if dpkg --compare-versions ${{ steps.package.outputs.version }} gt ${{ steps.appliance.outputs.version }}; then
+              echo "update_available=true" >> $GITHUB_OUTPUT
+          else
+              echo "update_available=false >> $GITHUB_OUTPUT
+          fi
+
+      - name: Trigger Build Workflow
+        if: steps.verify.outputs.update_available == 'true'
+        run: |
+          gh workflow run build.yml --ref master
