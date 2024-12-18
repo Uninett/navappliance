@@ -41,10 +41,10 @@ jobs:
       - name: Verify update available
         id: verify
         run: |
-          if dpkg --compare-versions ${{ steps.package.outputs.version }} gt ${{ steps.appliance.outputs.version }}; then
+          if dpkg --compare-versions "${{ steps.package.outputs.version }}" gt "${{ steps.appliance.outputs.version }}"; then
               echo "update_available=true" >> $GITHUB_OUTPUT
           else
-              echo "update_available=false >> $GITHUB_OUTPUT
+              echo "update_available=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Trigger Build Workflow
