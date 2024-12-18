@@ -37,13 +37,14 @@ jobs:
           fi
           echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
           echo "nav_version=$(cat version.txt)" >> $GITHUB_OUTPUT
+          echo "expected_tag=v$(cat version.txt)" >> $GITHUB_OUTPUT
 
       - name: Publish artifacts as release
         uses: ncipollo/release-action@v1
         with:
           artifacts: "navappliance.zip,version.txt"
-          name: ${{ steps.details.outputs.date }}
+          name: ${{ steps.details.outputs.nav_version }}
           body: "Automated build on ${{ steps.details.outputs.date }}, using version ${{ steps.details.outputs.nav_version }} of NAV Debian package"
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
-          tag: master
+          tag: ${{ steps.details.outputs.expected_tag }}
