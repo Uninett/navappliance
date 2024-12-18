@@ -69,7 +69,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git tag --force -a "v${{ steps.version.outputs.nav_version }}" -m "Successfully built with Debian package version ${{ steps.version.outputs.nav_version }}"
-          git push origin "v${{ steps.version.outputs.nav_version }}"
+          git push --force origin "v${{ steps.version.outputs.nav_version }}"
 
       - name: Upload version artifact
         uses: actions/upload-artifact@v4
