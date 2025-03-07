@@ -15,6 +15,9 @@ jobs:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Add NAV APT repository
         run: |
           sudo mkdir -p --mode=0755 /etc/apt/keyrings
