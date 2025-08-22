@@ -23,7 +23,7 @@ curl -fsSL https://nav.uninett.no/debian/gpg | gpg --dearmor -o /etc/apt/keyring
 CODENAME=$(lsb_release -s -c)
 echo "deb [signed-by=/etc/apt/keyrings/nav.gpg] https://nav.uninett.no/debian/ ${CODENAME} nav" > /etc/apt/sources.list.d/nav.list
 if [ "$CODENAME" = "bullseye" ]; then
-    echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list
+    echo "deb http://archive.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/backports.list
 fi
 
 export DEBIAN_FRONTEND=noninteractive
