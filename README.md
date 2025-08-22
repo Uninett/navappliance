@@ -40,6 +40,6 @@ adapt it to your needs for a smoother experience:
 
 ## Operating System
 
-The virtual appliance is based on Debian GNU/Linux 11 (Bullseye), and the Debian
+The virtual appliance is based on Debian GNU/Linux 12 (Bookworm), and the Debian
 packages released by the NAV team at their [APT
 repository](https://nav.uninett.no/install-instructions/#debian).
