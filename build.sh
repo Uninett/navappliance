@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/sh -e
 # Builds a virtual appliance in OVF format out of NAV, based on Debian GNU/Linux
 # and the latest available NAV Debian package.
 
@@ -12,7 +12,7 @@ if [ -z "$PACKER" ]; then
     exit 1
 fi
 
-OS=bullseye
+OS=bookworm
 [ -n "$1" ] && OS="$1"
 
 "$PACKER" build "${OS}.json"
