@@ -39,12 +39,16 @@ nav	nav/db_auto_update	boolean	true
 EOF
 
 apt-get -y update
-if [ "$CODENAME" = "bullseye" ]; then
-    apt-get -y install python3-psycopg2 python3-memcache graphite-carbon graphite-web
-    apt-get -y install uwsgi uwsgi-plugin-python3 libapache2-mod-proxy-uwsgi libapache2-mod-uwsgi
-    apt-get -y remove python3-reportbug
-    apt-get -y autoremove
-fi
+case "$CODENAME" in
+    "bullseye"|"bookworm")
+        apt-get -y install python3-psycopg2 python3-memcache graphite-carbon graphite-web
+        apt-get -y install uwsgi uwsgi-plugin-python3 libapache2-mod-proxy-uwsgi libapache2-mod-uwsgi
+        apt-get -y remove python3-reportbug
+        apt-get -y autoremove
+        ;;
+    *)
+        ;;
+esac
 apt-get -y install nav
 
 a2dissite 000-default
