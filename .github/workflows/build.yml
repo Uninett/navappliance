@@ -13,7 +13,7 @@ jobs:
     env:
       PACKER_LOG: 1
       PACKER_LOG_PATH: packer_build.log
-      PACKER_CACHE: .cache/packer
+      PACKER_CACHE_DIR: .cache/packer
       PACKER_GITHUB_API_TOKEN: ${{ secrets.PACKER_GITHUB_API_TOKEN }}
       DISTRO: bookworm
       VBOX_URL: "https://download.virtualbox.org/virtualbox/7.2.8/VirtualBox-7.2.8-173730-Win.exe"
@@ -91,7 +91,7 @@ jobs:
 
       - name: Create packer cache directory
         run: |
-          mkdir -p $PACKER_CACHE
+          mkdir -p $PACKER_CACHE_DIR
 
       - name: Get ISO checksums
         id: get-image-checksum
@@ -102,7 +102,7 @@ jobs:
         uses: actions/cache/restore@v3
         id: packer-cache-restore
         with:
-          path: ${{ env.PACKER_CACHE }}
+          path: ${{ env.PACKER_CACHE_DIR }}
           key: ${{ steps.get-image-checksum.outputs.checksum }}
 
       - name: Install virtualbox plugin
@@ -165,5 +165,5 @@ jobs:
         if: always() && steps.get-image-checksum.outputs.checksum
         id: packer-cache-save
         with:
-          path: ${{ env.PACKER_CACHE }}
+          path: ${{ env.PACKER_CACHE_DIR }}
           key: ${{ steps.get-image-checksum.outputs.checksum }}
