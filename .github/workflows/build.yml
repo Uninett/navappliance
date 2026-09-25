@@ -1,50 +1,117 @@
 name: Build NAV appliance
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   packer:
     name: "Build appliance using Packer"
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
     permissions:
       contents: write
     env:
       PACKER_LOG: 1
       PACKER_LOG_PATH: packer_build.log
-      PACKER_CACHE: .cache/packer
+      PACKER_CACHE_DIR: .cache/packer
       PACKER_GITHUB_API_TOKEN: ${{ secrets.PACKER_GITHUB_API_TOKEN }}
       DISTRO: bookworm
+      VBOX_URL: "https://download.virtualbox.org/virtualbox/7.2.8/VirtualBox-7.2.8-173730-Win.exe"
+      VBOX_SHA256: "ae5415cc968c0e8acddd99358c21d267a2c31ac4ff5182861aab9e6931001606"
+      VBOX_DOWNLOAD_PATH: ".cache/VirtualBox.exe"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install required packages from Ubuntu
-        run: |
-          sudo apt-get install -y virtualbox gnupg
+      - name: Restore cached VirtualBox download
+        uses: actions/cache/restore@v3
+        id: virtualbox-cache-restore
+        with:
+          path: ${{ env.VBOX_DOWNLOAD_PATH }}
+          key: ${{ env.VBOX_SHA256 }}
 
-      - name: Install Packer
+      - name: Download VirtualBox
+        id: download-virtualbox
+        shell: pwsh
         run: |
-          wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-          sudo apt-get update && sudo apt-get install -y packer
+          $ErrorActionPreference = 'Stop'
+          $dir = Split-Path -Path $env:VBOX_DOWNLOAD_PATH -Parent
+          if ( ($dir -cne "") -and -not (Test-Path -Path $dir) ) {
+            New-Item -Path $dir -ItemType 'Directory' | Out-Null
+          }
+          if ( -not (Test-Path -Path $env:VBOX_DOWNLOAD_PATH)) {
+            "Downloading from $env:VBOX_URL"
+            Invoke-WebRequest -Uri $env:VBOX_URL -OutFile $env:VBOX_DOWNLOAD_PATH
+          } else {
+            "Using cache"
+          }
+          $result = Get-FileHash $env:VBOX_DOWNLOAD_PATH -Algorithm SHA256
+          $checksum = $result.Hash.ToLower()
+          if ($checksum -cne $env:VBOX_SHA256) {
+            Remove-Item $env:VBOX_DOWNLOAD_PATH
+            throw 'The downloaded VirtualBox binary had a bad SHA256 checksum'
+          } else {
+            "Checksum is good"
+          }
+          "checksum=$checksum" >> $env:GITHUB_OUTPUT
+
+      - name: Install VirtualBox
+        id: install-virtualbox
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $extractpath = ".cache/VirtualBox-installers"
+          $dir = Split-Path -Path $extractpath -Parent
+          if ( ($dir -cne "") -and -not (Test-Path -Path $dir) ) {
+            New-Item -Path $dir -ItemType 'Directory' | Out-Null
+          }
+          Start-Process (Resolve-Path -Path "$env:VBOX_DOWNLOAD_PATH") -Wait -NoNewWindow -ArgumentList "-extract","-path",$extractpath,"-silent"
+          $installers = Resolve-Path -Path "$extractpath/*amd64.msi"
+          if (($installers | Measure-Object).Count -ne 1) {
+            throw "Expected 1 installer, got: $installers"
+          }
+          $msiArgs = @(
+            "/i", "$($installers[0])",
+            "/qn",
+            "ADDLOCAL=VBoxApplication",
+            "VBOX_START=0",
+            "VBOX_REGISTERFILEEXTENSIONS=0",
+            "VBOX_INSTALLQUICKLAUNCHSHORTCUT=0",
+            "VBOX_INSTALLDESKTOPSHORTCUT=0",
+            "INSTALLDIR=C:\VirtualBox"
+          )
+          $proc = Start-Process msiexec.exe -Wait -PassThru -NoNewWindow -ArgumentList $msiArgs
+          if ($proc.ExitCode -ne 0) {
+            throw "msiexec.exe failed installing VirtualBox with exit code $($proc.ExitCode)"
+          }
+          & "C:\VirtualBox\VBoxManage.exe" --version
+          "Installed to C:\VirtualBox"
+          "C:\VirtualBox" >> "$env:GITHUB_PATH"
 
       - name: Create packer cache directory
         run: |
-          mkdir -p $PACKER_CACHE
+          mkdir -p $PACKER_CACHE_DIR
 
       - name: Get ISO checksums
-        id: get-checksum
+        id: get-image-checksum
         run: |
           echo "checksum=$(cat "${DISTRO}.json" | jq '.builders[].iso_checksum')" >> $GITHUB_OUTPUT
-        shell: bash
 
-      - name: "Cache downloaded packer images"
-        uses: actions/cache/save@v3
-        if: always()
-        id: packer-cache
+      - name: Restore cached packer images
+        uses: actions/cache/restore@v3
+        id: packer-cache-restore
         with:
-          path: .cache/packer
-          key: ${{ steps.get-checksum.outputs.checksum }}
+          path: ${{ env.PACKER_CACHE_DIR }}
+          key: ${{ steps.get-image-checksum.outputs.checksum }}
 
       - name: Install virtualbox plugin
         run: |
@@ -55,7 +122,7 @@ jobs:
           packer validate "${DISTRO}.json"
 
       - name: Build Appliance Artifact
-        timeout-minutes: 22
+        timeout-minutes: 60
         run: |
           packer build "${DISTRO}.json"
 
@@ -92,3 +159,19 @@ jobs:
           name: navappliance
           path: |
             navappliance/**/*
+
+      - name: Cache downloaded VirtualBox binary
+        uses: actions/cache/save@v3
+        if: always() && steps.download-virtualbox.outputs.checksum
+        id: virtualbox-cache-save
+        with:
+          path: ${{ env.VBOX_DOWNLOAD_PATH }}
+          key: ${{ steps.download-virtualbox.outputs.checksum }}
+
+      - name: Cache downloaded packer images
+        uses: actions/cache/save@v3
+        if: always() && steps.get-image-checksum.outputs.checksum
+        id: packer-cache-save
+        with:
+          path: ${{ env.PACKER_CACHE_DIR }}
+          key: ${{ steps.get-image-checksum.outputs.checksum }}
