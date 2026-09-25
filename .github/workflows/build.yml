@@ -71,7 +71,21 @@ jobs:
           if (($installers | Measure-Object).Count -ne 1) {
             throw "Expected 1 installer, got: $installers"
           }
-          msiexec.exe /i $installers[0] /qn ADDLOCAL=VBoxApplication VBOX_START=0 VBOX_REGISTERFILEEXTENSIONS=0 VBOX_INSTALLQUICKLAUNCHSHORTCUT=0 VBOX_INSTALLDESKTOPSHORTCUT=0 INSTALLDIR=C:\VirtualBox
+          $msiArgs = @(
+            "/i", "$($installers[0])",
+            "/qn",
+            "ADDLOCAL=VBoxApplication",
+            "VBOX_START=0",
+            "VBOX_REGISTERFILEEXTENSIONS=0",
+            "VBOX_INSTALLQUICKLAUNCHSHORTCUT=0",
+            "VBOX_INSTALLDESKTOPSHORTCUT=0",
+            "INSTALLDIR=C:\VirtualBox"
+          )
+          $proc = Start-Process msiexec.exe -Wait -PassThru -NoNewWindow -ArgumentList $msiArgs
+          if ($proc.ExitCode -ne 0) {
+            throw "msiexec.exe failed installing VirtualBox with exit code $($proc.ExitCode)"
+          }
+          & "C:\VirtualBox\VBoxManage.exe" --version
           "Installed to C:\VirtualBox"
           "C:\VirtualBox" >> "$env:GITHUB_PATH"
 
